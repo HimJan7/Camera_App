@@ -1,8 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:camera/camera.dart';
 import 'package:camera_app/main.dart';
+import 'package:cupertino_icons/cupertino_icons.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
@@ -15,6 +18,9 @@ class _CameraScreenState extends State<CameraScreen>
     with WidgetsBindingObserver {
   CameraController? controller;
   bool _isCameraInitialized = false;
+  bool _isRearCameraSelected = true;
+  final resolutionPresets = ResolutionPreset.values;
+  ResolutionPreset currentResolutionPreset = ResolutionPreset.high;
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -27,16 +33,16 @@ class _CameraScreenState extends State<CameraScreen>
     if (state == AppLifecycleState.inactive) {
       cameraController.dispose();
     } else if (state == AppLifecycleState.resumed) {
-      setupCamera(cameraController.description);
+      onNewCameraSelected(cameraController.description);
     }
   }
 
-  void setupCamera(CameraDescription cameraDescription) async {
+  void onNewCameraSelected(CameraDescription cameraDescription) async {
     final previousCameraController = controller;
 
     final CameraController cameraController = CameraController(
       cameraDescription,
-      ResolutionPreset.high,
+      currentResolutionPreset,
       imageFormatGroup: ImageFormatGroup.jpeg,
     );
     await previousCameraController?.dispose();
@@ -66,7 +72,7 @@ class _CameraScreenState extends State<CameraScreen>
 
   @override
   void initState() {
-    setupCamera(cameras[0]);
+    onNewCameraSelected(cameras[0]);
     super.initState();
   }
 
@@ -78,13 +84,42 @@ class _CameraScreenState extends State<CameraScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _isCameraInitialized
-          ? AspectRatio(
-              aspectRatio: 1 / controller!.value.aspectRatio,
-              child: controller!.buildPreview(),
-            )
-          : Container(),
+    return SafeArea(
+      child: Scaffold(
+        body: _isCameraInitialized
+            ? Column(
+                children: [
+                  AspectRatio(
+                    aspectRatio: 1 / controller!.value.aspectRatio,
+                    child: controller!.buildPreview(),
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _isCameraInitialized = false;
+                        });
+                        onNewCameraSelected(
+                          cameras[_isRearCameraSelected ? 0 : 1],
+                        );
+                        setState(() {
+                          _isRearCameraSelected = !_isRearCameraSelected;
+                        });
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text(
+                              'Switch Camera',
+                              textAlign: TextAlign.center,
+                            ),
+                            duration: const Duration(seconds: 1),
+                          ),
+                        );
+                      },
+                      child: Text('SB')),
+                ],
+              )
+            : Container(),
+      ),
     );
   }
 }
