@@ -134,46 +134,100 @@ class _CameraScreenState extends State<CameraScreen>
           ? Column(
               children: [
                 Expanded(
-                    child: Stack(
-                  children: [
-                    CameraPreview(
-                      controller!,
-                    ),
-                  ],
+                    child: Container(
+                  alignment: Alignment.center,
+                  width: double.infinity,
+                  color: Colors.black,
+                  child: Stack(
+                    children: [
+                      CameraPreview(
+                        controller!,
+                      ),
+                    ],
+                  ),
                 )),
                 Container(
                   height: MediaQuery.of(context).size.height * 0.2,
                   color: Colors.black,
-                  child: Row(
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _isCameraInitialized = false;
-                          });
-                          onNewCameraSelected(
-                            cameras[_isRearCameraSelected ? 0 : 1],
-                          );
-                          setState(() {
-                            _isRearCameraSelected = !_isRearCameraSelected;
-                          });
-                        },
-                        icon: Icon(Icons.cameraswitch),
-                        color: Colors.white,
-                        iconSize: MediaQuery.of(context).size.height * 0.06,
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.06,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: <Widget>[
+                            Container(
+                              width: MediaQuery.of(context).size.height * 0.2,
+                              child: const Center(
+                                  child: Text(
+                                'VIDEO',
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.white),
+                              )),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.height * 0.2,
+                              child: const Center(
+                                  child: Text(
+                                'PHOTO',
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.white),
+                              )),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.height * 0.2,
+                              child: const Center(
+                                  child: Text(
+                                'PORTRAIT',
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.white),
+                              )),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.height * 0.2,
+                              child: const Center(
+                                  child: Text(
+                                'SLOMO',
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.white),
+                              )),
+                            ),
+                          ],
+                        ),
                       ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(Icons.circle),
-                        color: Colors.white,
-                        iconSize: MediaQuery.of(context).size.height * 0.08,
-                      ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(Icons.slideshow),
-                        color: Colors.white,
-                        iconSize: MediaQuery.of(context).size.height * 0.06,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _isCameraInitialized = false;
+                              });
+                              onNewCameraSelected(
+                                cameras[_isRearCameraSelected ? 0 : 1],
+                              );
+                              setState(() {
+                                _isRearCameraSelected = !_isRearCameraSelected;
+                              });
+                            },
+                            icon: Icon(Icons.cameraswitch),
+                            color: Colors.white,
+                            iconSize: MediaQuery.of(context).size.height * 0.06,
+                          ),
+                          IconButton(
+                            onPressed: () {},
+                            icon: Icon(Icons.circle),
+                            color: Colors.white,
+                            iconSize: MediaQuery.of(context).size.height * 0.08,
+                          ),
+                          IconButton(
+                            onPressed: () {},
+                            icon: Icon(Icons.slideshow),
+                            color: Colors.white,
+                            iconSize: MediaQuery.of(context).size.height * 0.06,
+                          ),
+                        ],
                       ),
                     ],
                   ),
