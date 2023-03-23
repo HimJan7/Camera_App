@@ -16,6 +16,8 @@ class CameraScreen extends StatefulWidget {
 
 class _CameraScreenState extends State<CameraScreen>
     with WidgetsBindingObserver {
+  late final size;
+  late final deviceRatio;
   CameraController? controller;
   bool _isCameraInitialized = false;
   bool _isRearCameraSelected = true;
@@ -108,6 +110,11 @@ class _CameraScreenState extends State<CameraScreen>
     }
   }
 
+  double getRatio() {
+    return ((MediaQuery.of(context).size.height)) /
+        MediaQuery.of(context).size.width;
+  }
+
   @override
   void initState() {
     onNewCameraSelected(cameras[0]);
@@ -122,77 +129,25 @@ class _CameraScreenState extends State<CameraScreen>
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: _isCameraInitialized
-            ? Stack(
-                children: [
-                  AspectRatio(
-                    aspectRatio: 1 / controller!.value.aspectRatio,
-                    child: controller!.buildPreview(),
-                  ),
-                  Row(
-                    children: [
-                      Slider(
-                        value: _currentZoomLevel,
-                        min: _minAvailableZoom,
-                        max: _maxAvailableZoom,
-                        activeColor: Colors.white,
-                        inactiveColor: Colors.white30,
-                        onChanged: (value) async {
-                          setState(() {
-                            _currentZoomLevel = value;
-                          });
-                          await controller!.setZoomLevel(value);
-                        },
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.black87,
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            _currentZoomLevel.toStringAsFixed(1) + 'x',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    alignment: Alignment.topRight,
-                    child: DropdownButton<ResolutionPreset>(
-                      underline: Container(),
-                      value: currentResolutionPreset,
-                      items: [
-                        for (ResolutionPreset preset in resolutionPresets)
-                          DropdownMenuItem(
-                            child: Text(
-                              preset.toString().split('.')[1].toUpperCase(),
-                              style: TextStyle(color: Colors.black),
-                            ),
-                            value: preset,
-                          )
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          currentResolutionPreset = value!;
-                          _isCameraInitialized = false;
-                        });
-                        onNewCameraSelected(controller!.description);
-                      },
-                      hint: Text(
-                        "Select item",
-                      ),
+    return Scaffold(
+      body: _isCameraInitialized
+          ? Column(
+              children: [
+                Expanded(
+                    child: Stack(
+                  children: [
+                    CameraPreview(
+                      controller!,
                     ),
-                  ),
-                  Container(
-                    alignment: Alignment.bottomLeft,
-                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
-                    child: IconButton(
-                        iconSize: 50,
+                  ],
+                )),
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.2,
+                  color: Colors.black,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      IconButton(
                         onPressed: () {
                           setState(() {
                             _isCameraInitialized = false;
@@ -204,12 +159,28 @@ class _CameraScreenState extends State<CameraScreen>
                             _isRearCameraSelected = !_isRearCameraSelected;
                           });
                         },
-                        icon: Icon(Icons.cameraswitch_rounded)),
-                  )
-                ],
-              )
-            : Container(),
-      ),
+                        icon: Icon(Icons.cameraswitch),
+                        color: Colors.white,
+                        iconSize: MediaQuery.of(context).size.height * 0.06,
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(Icons.circle),
+                        color: Colors.white,
+                        iconSize: MediaQuery.of(context).size.height * 0.08,
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(Icons.slideshow),
+                        color: Colors.white,
+                        iconSize: MediaQuery.of(context).size.height * 0.06,
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            )
+          : Container(),
     );
   }
 }
