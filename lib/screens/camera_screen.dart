@@ -6,6 +6,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:camera/camera.dart';
 import 'package:camera_app/main.dart';
 import 'package:cupertino_icons/cupertino_icons.dart';
+import 'package:horizontal_picker/horizontal_picker.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
@@ -135,13 +136,79 @@ class _CameraScreenState extends State<CameraScreen>
               children: [
                 Expanded(
                     child: Container(
-                  alignment: Alignment.center,
                   width: double.infinity,
                   color: Colors.black,
                   child: Stack(
                     children: [
-                      CameraPreview(
-                        controller!,
+                      Center(
+                        child: CameraPreview(
+                          controller!,
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(top: 15, right: 15),
+                        alignment: Alignment.topRight,
+                        child: DropdownButton<ResolutionPreset>(
+                          underline: Container(),
+                          value: currentResolutionPreset,
+                          items: [
+                            for (ResolutionPreset preset in resolutionPresets)
+                              DropdownMenuItem(
+                                child: Text(
+                                  preset.toString().split('.')[1].toUpperCase(),
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                                value: preset,
+                              )
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              currentResolutionPreset = value!;
+                              _isCameraInitialized = false;
+                            });
+                            onNewCameraSelected(controller!.description);
+                          },
+                          hint: Text(
+                            "Select item",
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 15,
+                        child: Row(
+                          children: [
+                            Container(
+                              height: 100,
+                              child: Slider(
+                                value: _currentZoomLevel,
+                                min: _minAvailableZoom,
+                                max: _maxAvailableZoom,
+                                activeColor: Colors.black,
+                                inactiveColor: Colors.white30,
+                                onChanged: (value) async {
+                                  setState(() {
+                                    _currentZoomLevel = value;
+                                  });
+                                  await controller!.setZoomLevel(value);
+                                },
+                              ),
+                            ),
+                            Container(
+                              width: 40,
+                              decoration: BoxDecoration(
+                                color: Colors.black87,
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  _currentZoomLevel.toStringAsFixed(1) + 'x',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -157,41 +224,89 @@ class _CameraScreenState extends State<CameraScreen>
                         child: ListView(
                           scrollDirection: Axis.horizontal,
                           children: <Widget>[
-                            Container(
-                              width: MediaQuery.of(context).size.height * 0.2,
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStatePropertyAll(Colors.black),
+                              ),
+                              onPressed: () {},
                               child: const Center(
-                                  child: Text(
-                                'VIDEO',
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.white),
-                              )),
+                                child: Text(
+                                  'PRO',
+                                  style: TextStyle(
+                                      fontSize: 18, color: Colors.white),
+                                ),
+                              ),
                             ),
-                            Container(
-                              width: MediaQuery.of(context).size.height * 0.2,
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStatePropertyAll(Colors.black),
+                              ),
+                              onPressed: () {},
                               child: const Center(
-                                  child: Text(
-                                'PHOTO',
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.white),
-                              )),
+                                child: Text(
+                                  'LIVE FOCUS',
+                                  style: TextStyle(
+                                      fontSize: 18, color: Colors.white),
+                                ),
+                              ),
                             ),
-                            Container(
-                              width: MediaQuery.of(context).size.height * 0.2,
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStatePropertyAll(Colors.black),
+                              ),
+                              onPressed: () {},
                               child: const Center(
-                                  child: Text(
-                                'PORTRAIT',
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.white),
-                              )),
+                                child: Text(
+                                  'VIDEO',
+                                  style: TextStyle(
+                                      fontSize: 18, color: Colors.white),
+                                ),
+                              ),
                             ),
-                            Container(
-                              width: MediaQuery.of(context).size.height * 0.2,
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStatePropertyAll(Colors.black),
+                              ),
+                              onPressed: () {},
                               child: const Center(
-                                  child: Text(
-                                'SLOMO',
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.white),
-                              )),
+                                child: Text(
+                                  'PHOTO',
+                                  style: TextStyle(
+                                      fontSize: 18, color: Colors.white),
+                                ),
+                              ),
+                            ),
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStatePropertyAll(Colors.black),
+                              ),
+                              onPressed: () {},
+                              child: const Center(
+                                child: Text(
+                                  'PORTRAIT',
+                                  style: TextStyle(
+                                      fontSize: 18, color: Colors.white),
+                                ),
+                              ),
+                            ),
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStatePropertyAll(Colors.black),
+                              ),
+                              onPressed: () {},
+                              child: const Center(
+                                child: Text(
+                                  'SLO-MO',
+                                  style: TextStyle(
+                                      fontSize: 18, color: Colors.white),
+                                ),
+                              ),
                             ),
                           ],
                         ),
