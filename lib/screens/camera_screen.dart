@@ -175,39 +175,43 @@ class _CameraScreenState extends State<CameraScreen>
                       ),
                       Positioned(
                         bottom: 15,
-                        child: Row(
-                          children: [
-                            Container(
-                              height: 100,
-                              child: Slider(
-                                value: _currentZoomLevel,
-                                min: _minAvailableZoom,
-                                max: _maxAvailableZoom,
-                                activeColor: Colors.black,
-                                inactiveColor: Colors.white30,
-                                onChanged: (value) async {
-                                  setState(() {
-                                    _currentZoomLevel = value;
-                                  });
-                                  await controller!.setZoomLevel(value);
-                                },
-                              ),
-                            ),
-                            Container(
-                              width: 40,
-                              decoration: BoxDecoration(
-                                color: Colors.black87,
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  _currentZoomLevel.toStringAsFixed(1) + 'x',
-                                  style: TextStyle(color: Colors.white),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.75,
+                                height: 100,
+                                child: Slider(
+                                  value: _currentZoomLevel,
+                                  min: _minAvailableZoom,
+                                  max: _maxAvailableZoom,
+                                  activeColor: Colors.black,
+                                  inactiveColor: Colors.white30,
+                                  onChanged: (value) async {
+                                    setState(() {
+                                      _currentZoomLevel = value;
+                                    });
+                                    await controller!.setZoomLevel(value);
+                                  },
                                 ),
                               ),
-                            ),
-                          ],
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.12,
+                                decoration: BoxDecoration(
+                                  color: Colors.black87,
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    _currentZoomLevel.toStringAsFixed(1) + 'x',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
